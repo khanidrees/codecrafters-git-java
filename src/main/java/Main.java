@@ -29,7 +29,7 @@ public class Main {
        }
        case "cat-file" -> {
          String path = args[2];
-         File file = new File(".git/objects/"+path.substring(0,1)+"/"+path.substring(2,path.length()));
+         File file = new File(".git/objects/"+path.substring(0,2)+"/"+path.substring(2,path.length()));
          try {
            FileReader reader = new FileReader(file);
            String content="";
