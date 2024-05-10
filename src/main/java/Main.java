@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -25,6 +26,26 @@ public class Main {
          } catch (IOException e) {
            throw new RuntimeException(e);
          }
+       }
+       case "cat-file" -> {
+         String path = args[2];
+         File file = new File(".git/objects/"+path.substring(0,1)+"/"+path.substring(2,path.length()));
+         try {
+           FileReader reader = new FileReader(file);
+           String content="";
+           int c;
+           while ((c = reader.read()) != -1) {
+             char ch = (char) c;
+             content+=ch;
+
+           }
+           content = content.split("/0")[1];
+           System.out.print(content);
+//           System.out.println("Initialized git directory");
+         } catch (IOException e) {
+           throw new RuntimeException(e);
+         }
+
        }
        default -> System.out.println("Unknown command: " + command);
      }
