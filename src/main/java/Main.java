@@ -39,7 +39,8 @@ public class Main {
              content+=ch;
 
            }
-           content = content.split("/0")[1];
+//           System.out.print(content);
+           content = content.split("\0")[1];
            System.out.print(content);
 //           System.out.println("Initialized git directory");
          } catch (IOException e) {
