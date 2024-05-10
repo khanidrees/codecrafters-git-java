@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Main {
   public static void main(String[] args){
@@ -31,18 +32,20 @@ public class Main {
          String path = args[2];
          File file = new File(".git/objects/"+path.substring(0,2)+"/"+path.substring(2,path.length()));
          try {
-           FileReader reader = new FileReader(file);
-           String content="";
-           int c;
-           while ((c = reader.read()) != -1) {
-             char ch = (char) c;
-             content+=ch;
 
+           String content="";
+           // Decompress the contents using Zlib
+           Path blobContent = Files.createTempFile("blobContent","");
+           ZlibUtil.decompressFile(file, blobContent.toFile());
+           // Extract the actual "content" from the decompressed data
+           String rawBlobData = Files.readString(blobContent);
+           if (!rawBlobData.startsWith("blob")) {
+             System.err.println("Not a valid blob: " + rawBlobData);
+             System.exit(1);
            }
-           System.out.print(content);
-           content = content.split("\0")[1];
-           System.out.print(content);
-//           System.out.println("Initialized git directory");
+           int nullByte = rawBlobData.indexOf('\0');
+           int blobContentLength = Integer.parseInt(rawBlobData.substring(5, nullByte));
+           System.out.print(rawBlobData.substring(nullByte+1));
          } catch (IOException e) {
            throw new RuntimeException(e);
          }
